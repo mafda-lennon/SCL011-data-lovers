@@ -1,13 +1,21 @@
 //declaramos una variable con la que podremos acceder a la data
-const takeData = window.STEAM.appnews.newsitems;
+//const takeData = window.STEAM.appnews.newsitems;
 //declaramos una variable que contenga los botones
 let buttonFilters = document.getElementsByClassName("btnfilters");
 // declaramos una variable vacia a la cual luego le concatenaremos el valor de los botones de filtrado
 let valueButton = "";
 // declaramos una variable vacía a la que le sumamos los valores de cada filtrado para así conectar filtrado con el orden
-let resultadoFor = "";
+let filtersInfo = "";
 //declaramos variable vacía para luego usarla para conectar estadisticas, filtrado y tarjetas.
 let statisticsNews = "";
+
+
+    fetch('https://raw.githubusercontent.com/mafda-lennon/SCL011-data-lovers/master/src/data/steam/steam.json')
+    .then(response => {
+        return response.json()
+    }).then(dataBase => {
+        const takeData = dataBase.appnews.newsitems;
+    
 
 // Llamar base de datos y dejar info en tarjetas nuevas... esta se despliega apenas el usuario ingrese a la Página
 for (let j = 0; j<takeData.length;j++){
@@ -25,7 +33,7 @@ for (let j = 0; j<takeData.length;j++){
      newsCards.innerHTML += `<p class="date">${dateNews}</p>`
 
     document.getElementById("content").appendChild(newsCards).innerHTML;
-}
+} 
 
 // Función que crea tarjetas para aplicarlas tanto en el filtro como en el orden
 let renderNews =(data)=>{
@@ -47,42 +55,42 @@ let renderNews =(data)=>{
     }
 }
 /* buttonFilters en la manera con la que el usuario filtra las noticias.
- Además Toma el valor de cada botón. 'resultadoFor' guarda valor para estadística y orden*/
+ Además Toma el valor de cada botón. 'filtersInfo' guarda valor para estadística y orden*/
 for (let i = 0; i < buttonFilters.length; i++){
     buttonFilters[i].addEventListener ('click',()=>{
         valueButton = buttonFilters[i].value
        if(valueButton==="feedlabel"){
         let btnAll = window.filterData.filter(takeData, valueButton);
         renderNews(btnAll)
-        resultadoFor=btnAll;
+        filtersInfo=btnAll;
        }
         if (valueButton==="TF2 Blog"){
             let tf2Btn= window.filterData.filter(takeData, valueButton);
            renderNews(tf2Btn)
-           resultadoFor=tf2Btn
+           filtersInfo=tf2Btn
         }
         if (valueButton ==="Product Update"){
             let updateBtn =  window.filterData.filter(takeData, valueButton);
             renderNews(updateBtn)
-            resultadoFor=updateBtn
+            filtersInfo=updateBtn
         }
         if(valueButton=== "PC Gamer"){
             let pcBtn = window.filterData.filter(takeData, valueButton);
             renderNews(pcBtn);
-            resultadoFor=pcBtn
+            filtersInfo=pcBtn
         }
         if (valueButton==="Eurogamer"){
             let euroBtn = window.filterData.filter(takeData, valueButton);
             renderNews (euroBtn);
-            resultadoFor=euroBtn
+            filtersInfo=euroBtn
         }
         if (valueButton==="Rock, Paper, Shotgun"){
            let rspBtn =  window.filterData.filter(takeData, valueButton);
            renderNews(rspBtn);
-           resultadoFor=rspBtn
+           filtersInfo=rspBtn
           }
           // aquí unimos las funciones de filtrado, tarjetas y estadisticas para que estas ultimas se muestren
-    statisticsNews =window.filterData.statistics(resultadoFor, takeData, valueButton);
+    statisticsNews =window.filterData.statistics(filtersInfo, takeData, valueButton);
     document.getElementById("statisticsContent").innerHTML = `<p id="percentNews">${statisticsNews}% de las Noticias</p>`
     })
  }
@@ -90,6 +98,7 @@ for (let i = 0; i < buttonFilters.length; i++){
 //le damos uso al select el cúal se conecta con la función de ordenar por fecha.
 let selectSort = document.getElementById("orderSelect");
 selectSort.addEventListener ('change', ()=>{
-    let ascendente = window.filterData.sortByDate(resultadoFor,  document.getElementById("orderSelect").value)
+    let ascendente = window.filterData.sortByDate(filtersInfo,  document.getElementById("orderSelect").value)
     renderNews(ascendente);
+})
 })
